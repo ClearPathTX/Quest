@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
     const values = [row];
 
     // Append to Google Sheet using REST API
-    const range = encodeURIComponent('Quest Meta Ads Database!A:T');
+    const range = encodeURIComponent('leads!A:T');
     const response = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=RAW`,
       {
