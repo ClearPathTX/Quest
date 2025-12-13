@@ -94,13 +94,24 @@ async function uploadImageToDrive(base64Image: string, fileName: string, accessT
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-    const accessToken = await getAccessToken();
+
     const spreadsheetId = process.env.GOOGLE_SHEET_ID;
     const driveFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
     if (!spreadsheetId || !driveFolderId) {
       return NextResponse.json(
-        { success: false, error: 'Google configuration not complete' },
+        { success: false, error: 'Google configuration not complete - missing SHEET_ID or DRIVE_FOLDER_ID' },
+        { status: 500 }
+      );
+    }
+
+    let accessToken: string;
+    try {
+      accessToken = await getAccessToken();
+    } catch (tokenError) {
+      console.error('Token error:', tokenError);
+      return NextResponse.json(
+        { success: false, error: `OAuth error: ${tokenError}` },
         { status: 500 }
       );
     }
@@ -141,7 +152,7 @@ export async function POST(request: NextRequest) {
     const values = [row];
 
     // Append to Google Sheet using REST API
-    const range = encodeURIComponent('leads!A:T');
+    const range = encodeURIComponent('Quest Meta Ads Database!A:T');
     const response = await fetch(
       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=RAW`,
       {
