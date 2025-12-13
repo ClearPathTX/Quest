@@ -1,0 +1,74 @@
+Design style
+
+Clean clinical / calm wellness vibe
+
+Lots of white space, soft shadows, rounded cards
+
+Stock therapy imagery (supportive, empathetic, bright natural light) 
+Quest Behavioral
+
+Color palette (approx)
+
+Primary (CTA / links): teal / blue-green
+
+Suggested range: #1F8A8C to #2AA6A7
+
+Secondary (accents): softer teal / aqua tint
+
+Suggested range: #6EC7C5 / #D9F3F2
+
+Neutrals:
+
+Background: #FFFFFF / off-white #F7F9FB
+
+Text: charcoal #1F2937 (headers), gray #6B7280 (body)
+
+Borders: #E5E7EB
+
+If you want, I can give you a ready-to-paste Tailwind palette that matches this.
+
+Typography (inferred)
+
+Likely a modern sans-serif stack (typical of WordPress wellness sites):
+
+Headings: Poppins / Montserrat (semi-bold)
+
+Body: Inter / Lato / Open Sans (regular)
+
+Type scale to match the feel
+
+H1: 44–56px, 600–700
+
+H2: 28–36px, 600
+
+Body: 16–18px, 400
+
+Buttons: 14–16px, 600, slight letter spacing
+
+Layout patterns to copy
+
+From the homepage sectioning 
+Quest Behavioral
++1
+:
+
+Hero: big headline + short reassurance + 2 CTAs (Verify Insurance / Get Help)
+
+Service grid: cards like “Residential”, “EMDR”, “Crisis Care”, “Individual Therapy” 
+Quest Behavioral
+
+About / mission: short credibility block 
+Quest Behavioral
+
+Contact strip: phone/email/address + privacy reassurance 
+Quest Behavioral
+
+UI components
+
+Buttons: pill/rounded, solid teal primary, outline secondary
+
+Cards: 12–16px radius, subtle shadow, icon or small image, “Learn more”
+
+Section spacing: big (80–120px padding top/bottom)
+
+Max width: ~1100–1200px content container
