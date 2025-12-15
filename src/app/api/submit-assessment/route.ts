@@ -11,13 +11,13 @@ export async function POST(request: NextRequest) {
       throw new Error('GOOGLE_APPS_SCRIPT_URL not configured');
     }
 
-    // Forward the data to Google Apps Script
+    // Forward the data to Google Apps Script with project identifier
     const response = await fetch(scriptUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, project: 'quest' }),
       redirect: 'follow',
     });
 
