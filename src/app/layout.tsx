@@ -15,8 +15,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Quest Behavioral Health | Mental Wellness in Lancaster, CA",
-  description: "Quest Behavioral Health provides personalized residential mental health care in Southern California. Compassionate treatment, evidence-based approaches, and a path to healing.",
+  title: "Quest Behavioral Health | Mental Wellness",
+  description: "Quest Behavioral Health provides personalized residential mental health care. Compassionate treatment, evidence-based approaches, and a path to healing.",
 };
 
 export default function RootLayout({

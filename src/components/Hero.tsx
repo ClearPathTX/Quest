@@ -51,8 +51,8 @@ export default function Hero() {
             className="text-lg md:text-xl text-text-body leading-relaxed mb-10"
           >
             At Quest Behavioral Health, we understand that taking the first step toward
-            mental health treatment takes courage. Our compassionate team in Southern
-            California provides personalized residential care to help you find hope and healing.
+            mental health treatment takes courage. Our compassionate team provides
+            personalized residential care to help you find hope and healing.
           </motion.p>
 
           <motion.div
