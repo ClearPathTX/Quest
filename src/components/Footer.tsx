@@ -78,10 +78,6 @@ export default function Footer() {
           className="mt-12 pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/70"
         >
           <p>&copy; {new Date().getFullYear()} Quest Behavioral Health. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
-          </div>
         </motion.div>
       </div>
     </footer>
