@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get Google Refresh Token</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        input, button { margin: 10px 0; padding: 10px; width: 100%; }
+        #result { background: #f0f0f0; padding: 15px; margin: 20px 0; word-break: break-all; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Get Google Refresh Token</h1>
+
+    <div class="step">
+        <h3>Step 1: Enter Your OAuth Credentials</h3>
+        <input type="text" id="clientId" placeholder="Client ID">
+        <input type="text" id="clientSecret" placeholder="Client Secret">
+        <button onclick="getAuthCode()">Get Authorization Code</button>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Authorize and Copy the Code</h3>
+        <p>After clicking the button above, you'll be redirected to Google. After authorizing, you'll see an error page. <strong>Don't worry!</strong> Copy the authorization code from the URL.</p>
+        <p>The URL will look like: <code>http://localhost/?code=YOUR_CODE_HERE</code></p>
+        <input type="text" id="authCode" placeholder="Paste authorization code here">
+        <button onclick="getRefreshToken()">Get Refresh Token</button>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Your Refresh Token</h3>
+        <div id="result">Your refresh token will appear here...</div>
+        <button onclick="copyToken()">Copy to Clipboard</button>
+    </div>
+
+    <script>
+        let refreshToken = '';
+
+        function getAuthCode() {
+            const clientId = document.getElementById('clientId').value;
+            const redirectUri = 'http://localhost';
+            const scope = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
+
+            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                `client_id=${encodeURIComponent(clientId)}&` +
+                `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                `response_type=code&` +
+                `scope=${encodeURIComponent(scope)}&` +
+                `access_type=offline&` +
+                `prompt=consent`;
+
+            window.open(authUrl, '_blank');
+        }
+
+        async function getRefreshToken() {
+            const clientId = document.getElementById('clientId').value;
+            const clientSecret = document.getElementById('clientSecret').value;
+            const authCode = document.getElementById('authCode').value;
+            const redirectUri = 'http://localhost';
+
+            try {
+                const response = await fetch('https://oauth2.googleapis.com/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        code: authCode,
+                        client_id: clientId,
+                        client_secret: clientSecret,
+                        redirect_uri: redirectUri,
+                        grant_type: 'authorization_code',
+                    }).toString(),
+                });
+
+                const data = await response.json();
+
+                if (data.refresh_token) {
+                    refreshToken = data.refresh_token;
+                    document.getElementById('result').innerText = refreshToken;
+                    alert('Success! Your refresh token is ready. Click "Copy to Clipboard" to copy it.');
+                } else {
+                    document.getElementById('result').innerText = 'Error: ' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                document.getElementById('result').innerText = 'Error: ' + error.message;
+            }
+        }
+
+        function copyToken() {
+            navigator.clipboard.writeText(refreshToken);
+            alert('Refresh token copied to clipboard!');
+        }
+    </script>
+</body>
+</html>

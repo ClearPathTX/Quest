@@ -1,45 +1,92 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getGoogleSheets, getGoogleDrive } from '@/lib/googleAuth';
 
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
-    // Use Google Apps Script webhook URL
-    const scriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL;
+    // Get Google Sheets API
+    const sheets = await getGoogleSheets();
+    const sheetId = process.env.GOOGLE_SHEET_ID;
 
-    if (!scriptUrl) {
-      throw new Error('GOOGLE_APPS_SCRIPT_URL not configured');
+    if (!sheetId) {
+      throw new Error('GOOGLE_SHEET_ID not configured');
     }
 
-    // Forward the data to Google Apps Script with project identifier
-    const response = await fetch(scriptUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    // Handle insurance card image upload if present
+    let imageUrl = '';
+    if (data.insuranceCardImage) {
+      try {
+        const drive = await getGoogleDrive();
+        const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+
+        // Extract base64 data
+        const base64Data = data.insuranceCardImage.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        // Upload to Google Drive
+        const fileMetadata = {
+          name: `insurance_${data.fullName}_${Date.now()}.jpg`,
+          parents: folderId ? [folderId] : [],
+        };
+
+        const media = {
+          mimeType: 'image/jpeg',
+          body: buffer,
+        };
+
+        const file = await drive.files.create({
+          requestBody: fileMetadata,
+          media: media,
+          fields: 'id,webViewLink',
+        } as any);
+
+        imageUrl = file.data.webViewLink || '';
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        // Continue without image if upload fails
+      }
+    }
+
+    // Prepare row data for Google Sheets
+    const timestamp = new Date().toISOString();
+    const rowData = [
+      timestamp,
+      data.fullName || '',
+      data.phone || '',
+      data.email || '',
+      data.dateOfBirth || '',
+      data.seekingHelpFor || '',
+      data.primaryIssue || '',
+      data.duration || '',
+      data.frequency || '',
+      data.withdrawal || '',
+      data.previousTreatment || '',
+      data.environment || '',
+      Array.isArray(data.mentalHealth) ? data.mentalHealth.join(', ') : '',
+      data.insuranceType || '',
+      data.insuranceProvider || '',
+      imageUrl,
+      data.insuranceReceivedHow || '',
+      data.recoveryReadiness?.toString() || '',
+      data.urgency || '',
+      data.consentToContact ? 'Yes' : 'No',
+    ];
+
+    // Append to Google Sheets
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: sheetId,
+      range: 'leads!A:T',
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [rowData],
       },
-      body: JSON.stringify({ ...data, project: 'quest' }),
-      redirect: 'follow',
     });
 
-    const responseText = await response.text();
-
-    // Try to parse as JSON
-    let result;
-    try {
-      result = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Failed to parse response:', responseText.substring(0, 200));
-      throw new Error('Invalid response from Google Apps Script');
-    }
-
-    if (result.success) {
-      return NextResponse.json({
-        success: true,
-        message: 'Assessment submitted successfully'
-      });
-    } else {
-      throw new Error(result.error || 'Failed to submit');
-    }
+    return NextResponse.json({
+      success: true,
+      message: 'Assessment submitted successfully'
+    });
 
   } catch (error) {
     console.error('Error submitting to Google Sheets:', error);
