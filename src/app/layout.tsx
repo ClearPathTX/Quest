@@ -47,6 +47,14 @@ export default function RootLayout({
         />
       </head>
       <body className={`${poppins.variable} ${inter.variable} antialiased`}>
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-W385S6WN"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          ></iframe>
+        </noscript>
         {children}
       </body>
     </html>
